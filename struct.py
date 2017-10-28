@@ -2,6 +2,7 @@ class Node:
     def __init__(self, word):
         self.word = word
         self.edges = []
+        self.occ = 1
 
 
     def __str__(self):
@@ -25,6 +26,11 @@ class Node:
     def addEdge(self, edge):
         self.edges += [edge]
 
+    def incrOccurrences(self):
+        self.occ+=1
+
+    def getOccurrences(self):
+        return self.occ
 
         
 class Edge:
