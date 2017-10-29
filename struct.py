@@ -1,9 +1,13 @@
+import re
+
 class Node:
     def __init__(self, word):
         self.word = word
         self.edges = {}
 
-
+    def __repr__(self):
+        return self.word
+        
     def __str__(self):
         s = ""
         if len(self.edges) == 0:
@@ -11,7 +15,10 @@ class Node:
         for e in self.edges.values():
             s += self.word + " -> " + e.getChild().getWord() + "\tWeight = " + str(e.getWeight()) + '\n'
         return s
-        
+
+    # def getInfo(self):
+    #     return "Node has " + 
+    
     def getWord(self):
         return self.word
 
@@ -26,12 +33,15 @@ class Node:
         self.edges[edge.getChild().getWord()] = edge
 
     def getMostCommon(self):
-        heavyest = None
-        for key in self.edges.keys():
-            if self.edges[key].getWeight() > heavyest.getWeight():
-                heavyest = self.edges[key]
-        return heavyest
-
+        node = None
+        weight = 0
+        for i in self.edges.value:
+            if i.weight > weight:
+                node = [i]
+            elif i.weight == weight:
+                node += [i]
+        return node
+        
 
         
 class Edge:
@@ -55,9 +65,17 @@ class Graph:
     def __init__(self, text, n, d):
         self.n = n
         self.d = d
-        self.extract_ngrams(text, n)
-        self.create_nodes()
-        
+        self.preprocess(text)
+        #self.extract_ngrams()
+        #self.create_nodes()
+
+    def preprocess(self,text):
+        text = re.sub("\,|--+", "", text)
+        self.phrases = re.split("[\n.?!;]*", text)
+        #        self.phrases = ["<s>"] + self.phrases + ["</s>"]
+
+    def getPhrases(self):
+        return self.phrases
         
     def getNgrams(self):
         return self.ngrams
@@ -71,13 +89,14 @@ class Graph:
     def getD(self):
         return self.d
 
-    def extract_ngrams(self, text, n):
-        words = text.split()
+    def extract_ngrams(self):
         self.ngrams = []
-        s = " "
-        for i in range(len(words)-n+1):
-            self.ngrams += [s.join(words[i:i+n])]
-
+        for p in self.phrases:
+            words = p.split("\s")
+            s = " "
+            for i in range(len(words)-self.n+1):
+                self.ngrams += [s.join(words[i:i+self.n])]
+                
     def create_nodes(self):
         self.nodes = {}
         for n in self.ngrams:

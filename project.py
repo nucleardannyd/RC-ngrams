@@ -7,9 +7,11 @@ text = text_file.read()
 text = text.lower()
 
 g = Graph(text, 1, 2)
-g.symmetric_window()
-print(g.getNodes()["acquitted?"])
-print(len(g.getNodes()["acquitted?"].getEdges()))
+
+#print(g.getNodes())
+# # g.symmetric_window()            
+# print(g.getNodes()["acquitted?"])
+# print(len(g.getNodes()["acquitted?"].getEdges()))
         
 
 
