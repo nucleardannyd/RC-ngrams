@@ -1,18 +1,16 @@
 class Node:
     def __init__(self, word):
         self.word = word
-        self.edges = []
-        self.occ = 1
+        self.edges = {}
 
 
     def __str__(self):
-        p=""
-        for i in self.edges:
-            p += self.word + " -> "
-            for j in range(i.getLength()-1):
-                p += i.getChild(j).getWord() + " -> "
-            p += i.getChild(i.getLength()-1).getWord() + '\n'
-        return p
+        s = ""
+        if len(self.edges) == 0:
+            return self.word + " with 0 edges"
+        for e in self.edges.values():
+            s += self.word + " -> " + e.getChild().getWord() + "\tWeight = " + str(e.getWeight()) + '\n'
+        return s
         
     def getWord(self):
         return self.word
@@ -20,36 +18,94 @@ class Node:
     def getEdges(self):
         return self.edges
     
-    def getEdge(self, edgenum):
-        return self.edges[edgenum]
+    def getEdge(self, word):
+        if word in self.edges.keys():
+            return self.edges[word]
     
     def addEdge(self, edge):
-        self.edges += [edge]
+        self.edges[edge.getChild().getWord()] = edge
 
-    def incrOccurrences(self):
-        self.occ+=1
+    def getMostCommon(self):
+        heavyest = None
+        for key in self.edges.keys():
+            if self.edges[key].getWeight() > heavyest.getWeight():
+                heavyest = self.edges[key]
+        return heavyest
 
-    def getOccurrences(self):
-        return self.occ
 
         
 class Edge:
-    def __init__(self,parent,childs):
-        self.parent = parent
-        self.childs = childs
-        self.length = len(childs)
+    def __init__(self,child, weight):
+        self.child = child
+        self.weight = weight
         
-    def getParent(self):
-        return self.parent
+    def getChild(self):
+        return self.child
 
-    def getNextChild(self):
-        return self.childs[0]
+    def getWeight(self):
+        return self.weight
 
-    def getChilds(self):
-        return self.childs
+    def setWeight(self, weight):
+        self.weight = weight
     
-    def getChild(self, i):
-        return self.childs[i]
+    def incrementWeight(self):
+        self.weight+=1
 
-    def getLength(self):
-        return self.length
+class Graph:
+    def __init__(self, text, n, d):
+        self.n = n
+        self.d = d
+        self.extract_ngrams(text, n)
+        self.create_nodes()
+        
+        
+    def getNgrams(self):
+        return self.ngrams
+
+    def getNodes(self):
+        return self.nodes
+
+    def getN(self):
+        return self.n
+
+    def getD(self):
+        return self.d
+
+    def extract_ngrams(self, text, n):
+        words = text.split()
+        self.ngrams = []
+        s = " "
+        for i in range(len(words)-n+1):
+            self.ngrams += [s.join(words[i:i+n])]
+
+    def create_nodes(self):
+        self.nodes = {}
+        for n in self.ngrams:
+            if n not in self.nodes.keys():
+                self.nodes[n] = Node(n)
+        
+
+    def nonsymmetric_window(self):
+        for i in range(len(self.ngrams)):
+            for j in range(1, self.d+1):
+                if (i-j) < 0:
+                    break
+                elif self.ngrams[i-j] in self.nodes[self.ngrams[i]].getEdges().keys():
+                    self.nodes[self.ngrams[i]].getEdge(self.ngrams[i-j]).incrementWeight()
+                else:
+                    self.nodes[self.ngrams[i]].addEdge(Edge(Node(self.ngrams[i-j]), 1))
+        
+    def symmetric_window(self):
+        for i in range(len(self.ngrams)):
+            for j in range(1, (self.d+2)//2):
+                if not (i-j) < 0:
+                    if self.ngrams[i-j] in self.nodes[self.ngrams[i]].getEdges().keys():
+                        self.nodes[self.ngrams[i]].getEdge(self.ngrams[i-j]).incrementWeight()
+                    else:
+                        self.nodes[self.ngrams[i]].addEdge(Edge(Node(self.ngrams[i-j]), 1))
+                if not (i+j) > len(self.ngrams)-1:
+                    if self.ngrams[i+j] in self.nodes[self.ngrams[i]].getEdges().keys():
+                        self.nodes[self.ngrams[i]].getEdge(self.ngrams[i+j]).incrementWeight()
+                    else:
+                        self.nodes[self.ngrams[i]].addEdge(Edge(Node(self.ngrams[i+j]), 1))
+        
