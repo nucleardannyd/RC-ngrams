@@ -5,6 +5,7 @@ class Node:
         self.word = word
         self.edges = {}
         self.occurrences = 1
+        
 
     def __repr__(self):
         return self.word
