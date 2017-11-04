@@ -5,10 +5,8 @@ text = text_file.read()
 text = text.lower()
 
 
-g = Graph(text, 3, 4) # Graph(text, n, D)
-g.symmetric_window()
-#g.nonsymmetric_window()
+g = Graph(text, 3, 4)  # Graph(text, n, D)
+# g.symmetric_window()
+g.nonsymmetric_window()
 g.export("graph.txt")
-        
-
-
+text_file.close()
