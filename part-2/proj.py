@@ -71,9 +71,9 @@ if len(infected.keys()) == n:
 #print (fraction)
 print("Infected: " + str(len(infected)))
 print("Repeated Nodes " + str(repeated))
+t = 1
 
-
-while len(infected.keys()) < n:
+while len(infected.keys()) + len(recovered.keys()) < 0.9 * n:
 	inf = infected.keys()
 	repeated = 0
 	for i in inf:
@@ -92,5 +92,6 @@ while len(infected.keys()) < n:
 	print("Infected: " + str(len(infected)))
 	print("recovered: " + str(len(recovered)))
 	print("Repeated Nodes " + str(repeated))
-	t += 1
+	t+=1
+
 print("It took " + str(t) + " days for people to be infected with " + str(initInfect) + " nodes infected")
