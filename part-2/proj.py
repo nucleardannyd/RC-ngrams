@@ -50,7 +50,7 @@ t = 0
 repeated = 0
 if function == "r":
 	for i in range(initInfect):
-		random.choice(suceptible)
+		rid = random.choice(suceptible.keys())
 		infected[rid] = suceptible[rid]
 		del(suceptible[rid])
 			
@@ -74,7 +74,6 @@ print("Repeated Nodes " + str(repeated))
 
 
 while len(infected.keys()) < n:
-	t += 1
 	inf = infected.keys()
 	repeated = 0
 	for i in inf:
@@ -93,5 +92,5 @@ while len(infected.keys()) < n:
 	print("Infected: " + str(len(infected)))
 	print("recovered: " + str(len(recovered)))
 	print("Repeated Nodes " + str(repeated))
-
+	t += 1
 print("It took " + str(t) + " days for people to be infected with " + str(initInfect) + " nodes infected")
